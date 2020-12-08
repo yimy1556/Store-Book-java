@@ -19,5 +19,4 @@ public abstract class Author {
     @OneToMany(mappedBy = "authorId" , cascade = {CascadeType.ALL})
     private Set<Book> bookSet;
 
-
 }

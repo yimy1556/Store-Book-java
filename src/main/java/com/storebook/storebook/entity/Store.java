@@ -18,7 +18,7 @@ public class Store {
     private String name;
     private String address;
 
-    @OneToMany(mappedBy = "store" , cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "storeId" , cascade = {CascadeType.ALL})
     private Set<Admin> adminSet ;
 
     @OneToMany(mappedBy = "store", cascade = {CascadeType.ALL})
