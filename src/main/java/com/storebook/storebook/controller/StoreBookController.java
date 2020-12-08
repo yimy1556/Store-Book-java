@@ -77,12 +77,12 @@ public class StoreBookController {
 
     /*---------------------------------------*/
     @GetMapping("/book/{bookId}")
-    public ResponseEntity<Book> bookFindById(@PathVariable Long bookId){
+    public ResponseEntity<Map<String,Object>> bookFindById(@PathVariable Long bookId){
         Optional<Book> book = bookService.findById(bookId);
 
         if(!book.isPresent()) return ResponseEntity.notFound().build();
 
-        return ResponseEntity.ok().body(book.get());
+        return ResponseEntity.ok().body(book.get().bookDTO());
     }
     @PostMapping("/book")
     public ResponseEntity<Book> saveBook(@RequestBody Book book){
@@ -90,20 +90,20 @@ public class StoreBookController {
     }
     @RequestMapping(value = "/books", method = RequestMethod.GET)
     public List<Map<String,Object>> booksFindAll(){
-        List<Map<String, Object>> hh = bookService.findAll().stream().map(Book::bookDTO).collect(Collectors.toList());
-        System.out.println(hh);
-        return hh;
+
+        return bookService.findAll().stream().map(Book::bookDTO).collect(Collectors.toList());
+
     }
 
     /* rutas del store */
 
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<Store> storeFindById(@PathVariable Long storeId){
+    public ResponseEntity<Map<String,Object>> storeFindById(@PathVariable Long storeId){
         Optional<Store> store = storeService.findById(storeId);
 
         if (!store.isPresent()) return ResponseEntity.notFound().build();
 
-        return ResponseEntity.ok().body(store.get());
+        return ResponseEntity.ok().body(store.get().storeDTO());
     }
 
     @PostMapping("/store")
@@ -112,37 +112,53 @@ public class StoreBookController {
     }
 
     @GetMapping("/stores")
-    public ResponseEntity<List<Store>> storesFindAll(){
-        return ResponseEntity.ok().body(storeService.findAll());
+    public List<Map<String,Object>> storesFindAll(){
+
+        return  storeService.findAll().stream().map(Store::storeDTO).collect(Collectors.toList());
     }
 
 
     /* Rutas De desarollador */
 
     @PostMapping("/store/{storeId}/books/{bookId}/{quantity}")
-    public ResponseEntity<StoreBook> storeBookseve(@PathVariable Long storeId, @PathVariable Long bookId, @PathVariable int quantity){
-        Optional<Store> storeOptional = storeService.findById(storeId);
-        Optional<Book> bookOptional = bookService.findById(bookId);
+    public ResponseEntity<Map<String,Object>> storeBookseve(@PathVariable Long storeId, @PathVariable Long bookId, @PathVariable int quantity){
+        Optional<Store> optionalStore = storeService.findById(storeId);
+        Optional<Book> optionalBook = bookService.findById(bookId);
 
-        if(storeOptional.isEmpty() && bookOptional.isEmpty())
-            return ResponseEntity.noContent().build();
+        if(!optionalStore.isPresent() || !optionalBook.isPresent()) return ResponseEntity.noContent().build();
 
         StoreBook storeBook = new StoreBook();
-        storeBook.setStore(storeOptional.get());
-        storeBook.setBook(bookOptional.get());
+        storeBook.setStore(optionalStore.get());
+        storeBook.setBook(optionalBook.get());
         storeBook.setStock(quantity);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(storeBookService.save(storeBook));
+        return ResponseEntity.status(HttpStatus.CREATED).body(storeBookService.save(storeBook).storeBookDTO());
+    }
+
+    @GetMapping("/storeBook")
+    public List<Map<String,Object>> storesBookFindAll(){
+
+        return  storeBookService.findAll().stream().map(StoreBook::storeBookDTO).collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/storeBook/{id}")
+    public ResponseEntity<Map<String,Object>> storeBookFindById(@PathVariable Long id){
+        Optional<StoreBook> storeBookOptional = storeBookService.findById(id);
+
+        if(!storeBookOptional.isPresent()) return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok().body(storeBookOptional.get().storeBookDTO());
     }
 
     @DeleteMapping("/store/book/{id}")
-    public ResponseEntity<StoreBook> storeBookUpdate(@PathVariable Long id){
+    public ResponseEntity<Map<String,Object>> storeBookUpdate(@PathVariable Long id){
         Optional<StoreBook> storeBook = storeBookService.findById(id);
 
         if(!storeBook.isPresent()) return ResponseEntity.noContent().build();
 
         storeBookService.delateById(id);
 
-        return ResponseEntity.ok().body(storeBook.get());
+        return ResponseEntity.ok().body(storeBook.get().storeBookDTO());
     }
 }

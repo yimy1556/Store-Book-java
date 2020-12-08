@@ -19,11 +19,12 @@ public class Book {
     private String author;
     private String category; // el type de string tiene que ser un class enum
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book" , cascade = {CascadeType.ALL})
     private Set<StoreBook> storeBooks;
 
     public Map<String, Object> bookDTO(){
         Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
         dto.put("title", this.getTitle());
         dto.put("author", this.getAuthor());
         dto.put("category", this.getCategory());
