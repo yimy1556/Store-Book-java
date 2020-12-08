@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 @Data
@@ -21,6 +22,9 @@ public class StoreBook {
     @ManyToOne
     @JoinColumn(name = "storeId")
     private Store store;
+
+    @OneToMany(mappedBy = "storeBook" , cascade = {CascadeType.ALL})
+    private Set<Purchase> purchaseSet ;
 
     private int stock;
 
