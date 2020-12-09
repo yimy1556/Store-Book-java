@@ -3,6 +3,8 @@ package com.storebook.storebook.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -22,5 +24,14 @@ public class Author {
 
     public Author(){
         super();
+    }
+
+    public Map<String, Object> authorDTO(){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("firstName", this.getFirstName());
+        dto.put("lastName", this.getLastName());
+        dto.put("nationality", this.getNationality());
+        return dto;
     }
 }

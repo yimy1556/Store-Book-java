@@ -30,7 +30,7 @@ public class Book {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
         dto.put("title", this.getTitle());
-        dto.put("author", this.getAuthorId());
+        dto.put("author", this.getAuthorId().authorDTO());
         dto.put("category", this.getCategory());
         return dto;
     }

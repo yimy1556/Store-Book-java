@@ -1,9 +1,6 @@
 package com.storebook.storebook.controller;
 
-import com.storebook.storebook.entity.Admin;
-import com.storebook.storebook.entity.Book;
-import com.storebook.storebook.entity.Store;
-import com.storebook.storebook.entity.StoreBook;
+import com.storebook.storebook.entity.*;
 import com.storebook.storebook.service.*;
 
 import org.springframework.beans.BeanUtils;
@@ -30,6 +27,9 @@ public class StoreBookController {
     @Autowired
     private StoreBookService storeBookService;
 
+    @Autowired
+    private  AuthorService authorService;
+
 
     /* Rutas para desarollador book */
     @DeleteMapping("/book/{bookId}")
@@ -44,14 +44,15 @@ public class StoreBookController {
     }
 
     @PatchMapping("/book")
-    public ResponseEntity<Book> bookUpdate(@RequestBody Book bookUpdate) {
+    public ResponseEntity<Map<String, Object>> bookUpdate(@RequestBody Book bookUpdate) {
         Optional<Book> optionalBook = bookService.findById(bookUpdate.getId());
 
         if (!optionalBook.isPresent()) return ResponseEntity.noContent().build();
 
-        BeanUtils.copyProperties(bookUpdate, optionalBook.get());
+        optionalBook.get().setTitle(bookUpdate.getTitle());
+        optionalBook.get().setCategory(bookUpdate.getCategory());
 
-        return this.saveBook(optionalBook.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(optionalBook.get()).bookDTO());
     }
 
     /*---------------------------------------*/
@@ -64,9 +65,24 @@ public class StoreBookController {
         return ResponseEntity.ok().body(book.get().bookDTO());
     }
 
+
     @PostMapping("/book")
-    public ResponseEntity<Book> saveBook(@RequestBody Book book) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(book));
+    public ResponseEntity<Map<String, Object>> saveBook2(@RequestBody Book book) {
+        authorService.save(book.getAuthorId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(book).bookDTO());
+    }
+
+
+    @PostMapping("/book/{authorId}")
+    public ResponseEntity<Map<String, Object>> saveBook(@RequestBody Book book, @PathVariable Long authorId) {
+        Optional<Author> author = authorService.findById(authorId);
+
+        if (!author.isPresent()) ResponseEntity.notFound().build();
+
+        book.setAuthorId(author.get());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(book).bookDTO());
     }
 
     @RequestMapping(value = "/books", method = RequestMethod.GET)
@@ -90,7 +106,7 @@ public class StoreBookController {
     }
 
     @PatchMapping("/store")
-    public ResponseEntity<Store> storeUpdate(@RequestBody Store storeUpdate) {
+    public ResponseEntity<Map<String, Object>> storeUpdate(@RequestBody Store storeUpdate) {
         Optional<Store> optionalStore = storeService.findById(storeUpdate.getId());
 
         if (!optionalStore.isPresent()) return ResponseEntity.noContent().build();
@@ -112,8 +128,8 @@ public class StoreBookController {
     }
 
     @PostMapping("/store")
-    public ResponseEntity<Store> saveStore(@RequestBody Store store) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.save(store));
+    public ResponseEntity<Map<String, Object>> saveStore(@RequestBody Store store) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.save(store).storeDTO());
     }
 
     @GetMapping("/stores")
@@ -168,10 +184,16 @@ public class StoreBookController {
     }
 
     /*----------------------------------------------------------------------------*/
-    /*Rutas de admin*/
-/*
-    @PostMapping("/user/admin")
-    public ResponseEntity<Admin> adminSave(@RequestBody Admin admin){
-        return ResponseEntity.ok().body(adminService.save(admin));
-    }*/
+    /*Rutas de author*/
+    @PostMapping("/author")
+    public ResponseEntity<Author> authorSave(@RequestBody Author author){
+        return ResponseEntity.ok().body(authorService.save(author));
+    }
+
+    @GetMapping("/authores")
+    public List<Map<String, Object>> authorFindAll() {
+
+        return authorService.findAll().stream().map(Author::authorDTO).collect(Collectors.toList());
+    }
+
 }
