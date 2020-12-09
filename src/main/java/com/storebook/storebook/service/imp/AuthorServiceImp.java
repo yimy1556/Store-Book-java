@@ -4,10 +4,12 @@ import com.storebook.storebook.entity.Author;
 import com.storebook.storebook.repository.AuthorRepository;
 import com.storebook.storebook.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class AuthorServiceImp implements AuthorService {
     @Autowired
     private AuthorRepository authorRepository;

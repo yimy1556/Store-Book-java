@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Data
 @Entity
-public abstract class Author {
+public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -19,4 +19,8 @@ public abstract class Author {
     @OneToMany(mappedBy = "authorId" , cascade = {CascadeType.ALL})
     private Set<Book> bookSet;
 
+
+    public Author(){
+        super();
+    }
 }

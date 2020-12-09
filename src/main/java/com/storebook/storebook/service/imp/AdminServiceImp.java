@@ -5,10 +5,12 @@ import com.storebook.storebook.entity.Customer;
 import com.storebook.storebook.repository.AdminRepository;
 import com.storebook.storebook.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class AdminServiceImp implements AdminService {
 
     @Autowired

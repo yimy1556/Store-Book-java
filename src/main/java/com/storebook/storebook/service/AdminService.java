@@ -1,7 +1,6 @@
 package com.storebook.storebook.service;
 
 import com.storebook.storebook.entity.Admin;
-import com.storebook.storebook.entity.Customer;
 
 import java.util.List;
 import java.util.Optional;

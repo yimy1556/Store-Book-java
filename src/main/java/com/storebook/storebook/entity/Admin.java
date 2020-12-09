@@ -14,4 +14,7 @@ public class Admin extends User {
     @JoinColumn(name = "storeId")
     private Store storeId;
 
+    public Admin(){
+        super();
+    }
 }

@@ -1,6 +1,5 @@
 package com.storebook.storebook.service;
 
-import com.storebook.storebook.entity.Admin;
 import com.storebook.storebook.entity.Author;
 
 import java.util.List;

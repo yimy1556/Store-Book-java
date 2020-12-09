@@ -17,7 +17,10 @@ public class Book {
     long id;
 
     private String title;
-    private String author;
+
+    @ManyToOne
+    @JoinColumn(name = "authorId")
+    private Author authorId;
     private String category; // el type de string tiene que ser un class enum
 
     @OneToMany(mappedBy = "book" , cascade = {CascadeType.ALL})
@@ -27,7 +30,7 @@ public class Book {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
         dto.put("title", this.getTitle());
-        dto.put("author", this.getAuthor());
+        dto.put("author", this.getAuthorId());
         dto.put("category", this.getCategory());
         return dto;
     }

@@ -5,10 +5,12 @@ import com.storebook.storebook.repository.BookRepository;
 import com.storebook.storebook.repository.PurchaseRepository;
 import com.storebook.storebook.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class PurchaseServiceImp implements PurchaseService {
     @Autowired
     private PurchaseRepository purchaseRepository;
