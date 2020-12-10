@@ -4,18 +4,25 @@ import com.storebook.storebook.entity.abs.User;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
 public class Customer extends User {
     
     @OneToMany(mappedBy = "customer" , cascade = {CascadeType.ALL})
-    private Set<Purchase> purchaseSet ;
+    private List<Purchase> purchaseSet ;
 
-    private void addPurchase(Purchase purchase){
-        this.getPurchaseSet().add(purchase);
+    public Map<String, Object> customerDTO(){
+        Map<String,Object> dto = new HashMap<>();
+        dto.put("id", this.getId());
+        dto.put("firstName", this.getFirstName());
+        dto.put("lastName", this.getLastName());
+        dto.put("email", this.getEmail());
+        dto.put("password", this.getPassword());
+        return dto;
     }
-
 
 }

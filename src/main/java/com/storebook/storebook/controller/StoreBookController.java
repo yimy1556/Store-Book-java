@@ -30,8 +30,136 @@ public class StoreBookController {
     @Autowired
     private  AuthorService authorService;
 
+    @Autowired
+    private  CustomerService customerService;
 
-    /* Rutas para desarollador book */
+    /*-------Rutas Pedidas----------*/
+
+    // ruta 1
+    @GetMapping("/books")
+    public List<Map<String, Object>> storesBookFindAll() {
+
+        return storeBookService.findAll().stream().map(StoreBook::storeBookDTO).collect(Collectors.toList());
+    }
+
+    // ruta 2
+    @GetMapping("/books/{bookId}")
+    public ResponseEntity<List<Map<String, Object>>> storesBookFindByBookId(@PathVariable Long bookId) {
+        Optional<Book> optionalBook = bookService.findById(bookId);
+
+        if(optionalBook.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<Map<String, Object>> listStoresBook = storeBookService.findByBookId(bookId).stream().map(StoreBook::storeBookDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(listStoresBook);
+    }
+
+    // ruta 3
+    @GetMapping("/authors")
+    public List<Map<String, Object>> authorFindAll() {
+
+        return authorService.findAll().stream().map(Author::authorDTO).collect(Collectors.toList());
+    }
+
+    // ruta 4
+    @PostMapping("/author")
+    public ResponseEntity<Author> authorSave(@RequestBody Author author){
+        return ResponseEntity.ok().body(authorService.save(author));
+    }
+
+    // ruta 5
+    @GetMapping("/authors/{authorId}/books")
+    public ResponseEntity<List<Map<String, Object>>> booksFindByAuthorId(@PathVariable Long authorId){
+        Optional<Author> authorOptional = authorService.findById(authorId);
+
+        if (authorOptional.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<Map<String, Object>> listBooks = authorOptional.get().getBookSet().stream().map(Book::bookDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(listBooks);
+    }
+
+    // ruta 6
+    @PostMapping("/authors/{authorId}/books")
+    public ResponseEntity<Map<String, Object>> saveBook(@RequestBody Book book, @PathVariable Long authorId) {
+        Optional<Author> author = authorService.findById(authorId);
+
+        if (author.isEmpty()) ResponseEntity.notFound().build();
+
+        book.setAuthorId(author.get());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(book).bookDTO());
+    }
+
+    // ruta 7
+    @GetMapping("/stores")
+    public List<Map<String, Object>> storesFindAll() {
+
+        return storeService.findAll().stream().map(Store::storeDTO).collect(Collectors.toList());
+    }
+
+    // ruta 8
+    @PostMapping("/stores")
+    public ResponseEntity<Map<String, Object>> saveStore(@RequestBody Store store) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.save(store).storeDTO());
+    }
+
+    // ruta 9
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<Map<String, Object>> storeFindById(@PathVariable Long storeId) {
+        Optional<Store> store = storeService.findById(storeId);
+
+        if (!store.isPresent()) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok().body(store.get().storeDTO());
+    }
+
+    // ruta 10
+    @PostMapping("/stores/{storeId}/books/{bookId}/{quantity}")
+    public ResponseEntity<Map<String, Object>> storeBookseve(@PathVariable Long storeId, @PathVariable Long bookId, @PathVariable int quantity) {
+        Optional<Store> optionalStore = storeService.findById(storeId);
+        Optional<Book> optionalBook = bookService.findById(bookId);
+
+        if (!optionalStore.isPresent() || !optionalBook.isPresent()) return ResponseEntity.noContent().build();
+
+        StoreBook storeBook = new StoreBook();
+        storeBook.setStore(optionalStore.get());
+        storeBook.setBook(optionalBook.get());
+        storeBook.setStock(quantity);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(storeBookService.save(storeBook).storeBookDTO());
+    }
+
+    // ruta 13
+    @PostMapping("/customers")
+    public ResponseEntity<Map<String, Object>> seveCustomer(@RequestBody Customer customer){
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.save(customer).customerDTO());
+    }
+
+    // ruta 14
+    @GetMapping("/customers/{customerId}")
+    public  ResponseEntity<Map<String, Object>> customerFindById(@PathVariable long customerId){
+        Optional<Customer> customerOptional = customerService.findById(customerId);
+
+        if (customerOptional.isEmpty()) return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok().body(customerOptional.get().customerDTO());
+    }
+
+    // ruta 15
+    @GetMapping("/customers/{customerId}/books")
+    public  ResponseEntity<List<Map<String, Object>>> customerBooksFindById(@PathVariable long customerId){
+        Optional<Customer> customerOptional = customerService.findById(customerId);
+
+        if (customerOptional.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<Map<String, Object>> bookList = customerOptional.get().getPurchaseSet().stream().map(Purchase::purchaseBookDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(bookList);
+    }
+
+    /*----------------------------------------------------------------------------------------------*/
+
     @DeleteMapping("/book/{bookId}")
     public ResponseEntity<Book> bookDelete(@PathVariable Long bookId) {
         Optional<Book> book = bookService.findById(bookId);
@@ -55,7 +183,6 @@ public class StoreBookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(optionalBook.get()).bookDTO());
     }
 
-    /*---------------------------------------*/
     @GetMapping("/book/{bookId}")
     public ResponseEntity<Map<String, Object>> bookFindById(@PathVariable Long bookId) {
         Optional<Book> book = bookService.findById(bookId);
@@ -65,35 +192,13 @@ public class StoreBookController {
         return ResponseEntity.ok().body(book.get().bookDTO());
     }
 
-
-    @PostMapping("/book")
-    public ResponseEntity<Map<String, Object>> saveBook2(@RequestBody Book book) {
-        authorService.save(book.getAuthorId());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(book).bookDTO());
-    }
-
-
-    @PostMapping("/book/{authorId}")
-    public ResponseEntity<Map<String, Object>> saveBook(@RequestBody Book book, @PathVariable Long authorId) {
-        Optional<Author> author = authorService.findById(authorId);
-
-        if (!author.isPresent()) ResponseEntity.notFound().build();
-
-        book.setAuthorId(author.get());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.save(book).bookDTO());
-    }
-
-    @RequestMapping(value = "/books", method = RequestMethod.GET)
+    @RequestMapping(value = "/bookss", method = RequestMethod.GET)
     public List<Map<String, Object>> booksFindAll() {
 
         return bookService.findAll().stream().map(Book::bookDTO).collect(Collectors.toList());
 
     }
 
-    /*----------------------------------------------------------------------------------------------*/
-    /* rutas de desarollador store */
     @DeleteMapping("/store/{storeId}")
     public ResponseEntity<Store> storeDelete(@PathVariable Long storeId) {
         Optional<Store> store = storeService.findById(storeId);
@@ -116,53 +221,6 @@ public class StoreBookController {
         return this.saveStore(optionalStore.get());
     }
 
-    /* rutas del store */
-
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<Map<String, Object>> storeFindById(@PathVariable Long storeId) {
-        Optional<Store> store = storeService.findById(storeId);
-
-        if (!store.isPresent()) return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok().body(store.get().storeDTO());
-    }
-
-    @PostMapping("/store")
-    public ResponseEntity<Map<String, Object>> saveStore(@RequestBody Store store) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.save(store).storeDTO());
-    }
-
-    @GetMapping("/stores")
-    public List<Map<String, Object>> storesFindAll() {
-
-        return storeService.findAll().stream().map(Store::storeDTO).collect(Collectors.toList());
-    }
-
-    /*-------------------------------------------------------------------------------------------------------*/
-    /* Rutas De desarollador */
-
-    @PostMapping("/store/{storeId}/books/{bookId}/{quantity}")
-    public ResponseEntity<Map<String, Object>> storeBookseve(@PathVariable Long storeId, @PathVariable Long bookId, @PathVariable int quantity) {
-        Optional<Store> optionalStore = storeService.findById(storeId);
-        Optional<Book> optionalBook = bookService.findById(bookId);
-
-        if (!optionalStore.isPresent() || !optionalBook.isPresent()) return ResponseEntity.noContent().build();
-
-        StoreBook storeBook = new StoreBook();
-        storeBook.setStore(optionalStore.get());
-        storeBook.setBook(optionalBook.get());
-        storeBook.setStock(quantity);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(storeBookService.save(storeBook).storeBookDTO());
-    }
-
-    @GetMapping("/storeBook")
-    public List<Map<String, Object>> storesBookFindAll() {
-
-        return storeBookService.findAll().stream().map(StoreBook::storeBookDTO).collect(Collectors.toList());
-    }
-
-
     @GetMapping("/storeBook/{id}")
     public ResponseEntity<Map<String, Object>> storeBookFindById(@PathVariable Long id) {
         Optional<StoreBook> storeBookOptional = storeBookService.findById(id);
@@ -181,19 +239,6 @@ public class StoreBookController {
         storeBookService.delateById(id);
 
         return ResponseEntity.ok().body(storeBook.get().storeBookDTO());
-    }
-
-    /*----------------------------------------------------------------------------*/
-    /*Rutas de author*/
-    @PostMapping("/author")
-    public ResponseEntity<Author> authorSave(@RequestBody Author author){
-        return ResponseEntity.ok().body(authorService.save(author));
-    }
-
-    @GetMapping("/authores")
-    public List<Map<String, Object>> authorFindAll() {
-
-        return authorService.findAll().stream().map(Author::authorDTO).collect(Collectors.toList());
     }
 
 }

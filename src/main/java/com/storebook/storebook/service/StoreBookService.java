@@ -14,4 +14,7 @@ public interface StoreBookService {
 
     public void delateById(Long id);
 
+    public List<StoreBook> findByBookId(long bookId);
+
+    public List<StoreBook> findByStoreId(long stereId);
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class Author {
     private  String nationality;
 
     @OneToMany(mappedBy = "authorId" , cascade = {CascadeType.ALL})
-    private Set<Book> bookSet;
+    private List<Book> bookSet;
 
 
     public Author(){

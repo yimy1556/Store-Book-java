@@ -33,4 +33,14 @@ public class StoreBookServiceImp implements StoreBookService {
     public void delateById(Long id) {
         storeBookRepository.deleteById(id);
     }
+
+    @Override
+    public List<StoreBook> findByBookId(long bookId) {
+        return storeBookRepository.findByBookId(bookId);
+    }
+
+    @Override
+    public List<StoreBook> findByStoreId(long stereId) {
+        return storeBookRepository.findByStoreId(stereId);
+    }
 }
