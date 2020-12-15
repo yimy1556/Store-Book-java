@@ -15,4 +15,5 @@ public interface CustomerService {
 
     public void delateById(Long id);
 
+    public Customer findByEmail(String email);
 }

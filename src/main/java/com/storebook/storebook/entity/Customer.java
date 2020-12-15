@@ -2,12 +2,14 @@ package com.storebook.storebook.entity;
 
 import com.storebook.storebook.entity.abs.User;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 public class Customer extends User {

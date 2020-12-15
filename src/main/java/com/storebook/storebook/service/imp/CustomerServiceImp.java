@@ -33,4 +33,8 @@ public class CustomerServiceImp implements CustomerService {
     public void delateById(Long id) {
         customerRepository.deleteById(id);
     }
+
+    @Override
+    public Customer findByEmail(String email) { return customerRepository.findByEmail(email); }
+
 }

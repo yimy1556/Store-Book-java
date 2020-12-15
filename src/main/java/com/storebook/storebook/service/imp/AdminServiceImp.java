@@ -1,7 +1,6 @@
 package com.storebook.storebook.service.imp;
 
 import com.storebook.storebook.entity.Admin;
-import com.storebook.storebook.entity.Customer;
 import com.storebook.storebook.repository.AdminRepository;
 import com.storebook.storebook.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,4 +28,7 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public void delateById(Long id) { adminRepository.deleteById(id); }
+
+    @Override
+    public Admin findByEmail(String email) { return adminRepository.findByEmail(email); }
 }

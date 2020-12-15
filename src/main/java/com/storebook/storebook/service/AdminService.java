@@ -15,4 +15,5 @@ public interface AdminService {
 
     public void delateById(Long id);
 
+    public Admin findByEmail(String email);
 }

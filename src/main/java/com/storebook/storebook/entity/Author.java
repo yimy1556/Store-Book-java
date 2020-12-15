@@ -23,10 +23,6 @@ public class Author {
     private List<Book> bookSet;
 
 
-    public Author(){
-        super();
-    }
-
     public Map<String, Object> authorDTO(){
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
