@@ -1,12 +1,12 @@
 package com.storebook.storebook.entity;
 
+import com.storebook.storebook.entity.enumerates.Nationality;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 @Entity
@@ -17,7 +17,8 @@ public class Author {
 
     private  String firstName;
     private  String lastName;
-    private  String nationality;
+
+    private String nationality;
 
     @OneToMany(mappedBy = "authorId" , cascade = {CascadeType.ALL})
     private List<Book> bookSet;
