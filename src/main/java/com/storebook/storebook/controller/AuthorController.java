@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +28,6 @@ public class AuthorController {
      * Devuelve un JSON con todos los autores de la BBDD.
      */
     @GetMapping()
-    @PreAuthorize("hasAnyRole('SUPERADMIN')")
     public List<Map<String, Object>> authorFindAll() {
         return authorService.findAll().stream().map(Author::authorDTO).collect(Collectors.toList());
     }
@@ -38,7 +36,6 @@ public class AuthorController {
      * Permite guardar un autor en la BBDD.
      */
     @PostMapping()
-    @PreAuthorize("hasAnyRole('SUPERADMIN')")
     public ResponseEntity<Author> authorSave(@RequestBody Author author){
         return ResponseEntity.ok().body(authorService.save(author));
     }

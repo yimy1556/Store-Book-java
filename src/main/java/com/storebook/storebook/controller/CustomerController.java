@@ -6,6 +6,7 @@ import com.storebook.storebook.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,10 +32,11 @@ public class CustomerController {
      * Devuelve un JSON con la información del cliente
      */
     @GetMapping("/customers/{customerId}")
-    public  ResponseEntity<Map<String, Object>> customerFindById(@PathVariable long customerId){
+    public  ResponseEntity<Map<String, Object>> customerFindById(@PathVariable long customerId, Authentication authentication){
         Optional<Customer> customerOptional = customerService.findById(customerId);
+        boolean customerVal = customerOptional.get().getEmail().equals(authentication.getName());
 
-        if (customerOptional.isEmpty()) return ResponseEntity.noContent().build();
+        if (customerOptional.isPresent() || customerVal ) return ResponseEntity.noContent().build();
 
         return ResponseEntity.ok().body(customerOptional.get().customerDTO());
     }
@@ -52,6 +54,5 @@ public class CustomerController {
 
         return ResponseEntity.ok().body(bookList);
     }
-
 
 }

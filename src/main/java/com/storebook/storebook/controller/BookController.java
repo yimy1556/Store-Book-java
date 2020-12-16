@@ -5,6 +5,7 @@ import com.storebook.storebook.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +66,7 @@ public class BookController {
      * Devuelve un JSON con los datos de los libros que estan en la BBDD.
      */
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public List<Map<String, Object>> booksFindAll(Authentication authentication) {
         System.out.printf(String.valueOf(authentication.getAuthorities()));
 
